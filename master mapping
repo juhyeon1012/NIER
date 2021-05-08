@@ -1,0 +1,44 @@
+
+library(ggmap)
+library(ggrepel)
+key='AIzaSyA2ZGk-qeto2HGeFP_XDN0Y1fSt44gfLg0'
+register_google(key,account_type = 'standard')
+
+library(readxl)
+indata<-read_excel("C:/r_workingfiles/nier2.xlsx")
+View(indata)
+name<-indata$name
+ad<-indata$name
+
+gc<-geocode(enc2utf8(ad))
+
+df<-data.frame(name=name,
+               lon=gc$lon,
+               lat=gc$lat)
+
+cen<-c(mean(df$lon),mean(df$lat))
+
+
+
+
+#cen<-c(128.64,35.21)
+
+map<-get_googlemap(center = cen,
+                   maptype = "roadmap",
+                   zoom=10)
+
+ggmap(map)
+
+gmap<- ggmap(map)
+gmap+geom_point(data = df,
+                mapping = aes(x=lon,
+                              y= lat),
+                shape = 19,
+                color = "darkgreen",
+                size = 3)+
+geom_label_repel(data=df,
+                 aes(x=lon,y=lat),
+                 size=3,
+                 label=df$name)
+
+
